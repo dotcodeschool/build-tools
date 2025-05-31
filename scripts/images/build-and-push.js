@@ -10,6 +10,12 @@ const execPromise = util.promisify(exec);
 const fs = require("fs");
 const path = require("path");
 
+// Get version from package.json
+const packageJson = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "package.json"), "utf8")
+);
+const VERSION = packageJson.version;
+
 // Emojis
 const EMOJIS = {
   ROCKET: "🚀",
@@ -25,7 +31,7 @@ const EMOJIS = {
 
 // Docker Hub configuration
 const DOCKER_USERNAME = "iammasterbrucewayne";
-const VERSION = "latest";
+const DOCKER_TAG = "latest";
 
 // Function to check if repository exists
 async function checkRepo(repo) {
@@ -182,7 +188,10 @@ function parseArgs() {
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
 
-    if (arg === "--service" || arg === "-s") {
+    if (arg === "--version" || arg === "-v") {
+      console.log(`dotcodeschool-build-images v${VERSION}`);
+      process.exit(0);
+    } else if (arg === "--service" || arg === "-s") {
       if (i + 1 < args.length) {
         currentService = { name: args[++i] };
         services.push(currentService);
@@ -200,6 +209,7 @@ function parseArgs() {
 Usage: build-and-push.js [options]
 
 Options:
+  -v, --version           Show version number
   -s, --service <name>    Service name (can be used multiple times)
   -p, --path <path>      Path to service directory (must follow --service)
   -t, --token <token>    Docker Hub token

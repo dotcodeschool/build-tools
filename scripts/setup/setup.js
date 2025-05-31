@@ -11,6 +11,12 @@ const fs = require("fs");
 const path = require("path");
 const net = require("net");
 
+// Get version from package.json
+const packageJson = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "package.json"), "utf8")
+);
+const VERSION = packageJson.version;
+
 // Emojis
 const EMOJIS = {
   ROCKET: "🚀",
@@ -302,7 +308,10 @@ function parseArgs() {
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
 
-    if (arg === "--backend-domain" || arg === "-b") {
+    if (arg === "--version" || arg === "-v") {
+      console.log(`dotcodeschool-setup v${VERSION}`);
+      process.exit(0);
+    } else if (arg === "--backend-domain" || arg === "-b") {
       if (i + 1 < args.length) {
         config.backendDomain = args[++i];
       }
@@ -327,6 +336,7 @@ function parseArgs() {
 Usage: setup.js [options]
 
 Options:
+  -v, --version           Show version number
   -b, --backend-domain <domain>  Backend domain
   -g, --git-domain <domain>     Git server domain
   -r, --redis-pass <password>   Redis password (default: changeme)
