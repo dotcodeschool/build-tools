@@ -2,41 +2,85 @@
 
 This repository contains build tools and utilities for Dot Code School services.
 
-## Prerequisites
+## Quick Start
+
+### Prerequisites
 
 - Node.js >= 18.0.0
 - PNPM >= 8.0.0
 
-## Installation
+### Installation
+
+#### macOS
 
 ```bash
-pnpm install
+# Install via Homebrew
+brew tap dotcodeschool/tools
+brew install dotcodeschool-setup dotcodeschool-build-images
 ```
 
-## Available Scripts
+#### Linux
 
-- `pnpm setup` - Run the setup process
-- `pnpm build-images` - Build Docker images
-- `pnpm build:all` - Run all build processes
-- `pnpm build:setup` - Build setup components
-- `pnpm build:images` - Build all Docker images
+```bash
+# Install setup tool
+sudo curl -L https://github.com/dotcodeschool/build-tools/releases/latest/download/dotcodeschool-setup-linux -o /usr/local/bin/dotcodeschool-setup
+sudo chmod +x /usr/local/bin/dotcodeschool-setup
 
-## Project Structure
+# Install build-images tool
+sudo curl -L https://github.com/dotcodeschool/build-tools/releases/latest/download/dotcodeschool-build-images-linux -o /usr/local/bin/dotcodeschool-build-images
+sudo chmod +x /usr/local/bin/dotcodeschool-build-images
+```
 
-This is a monorepo managed with PNPM workspaces. The main packages are:
+#### Windows (PowerShell)
 
-- `dotcodeschool-setup` - Setup utilities
-- `dotcodeschool-build-images` - Docker image build tools
+```powershell
+# Create a directory for the tools (if it doesn't exist)
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.dotcodeschool\bin"
 
-## Development
+# Download the tools
+Invoke-WebRequest -Uri "https://github.com/dotcodeschool/build-tools/releases/latest/download/dotcodeschool-setup-win.exe" -OutFile "$env:USERPROFILE\.dotcodeschool\bin\dotcodeschool-setup.exe"
+Invoke-WebRequest -Uri "https://github.com/dotcodeschool/build-tools/releases/latest/download/dotcodeschool-build-images-win.exe" -OutFile "$env:USERPROFILE\.dotcodeschool\bin\dotcodeschool-build-images.exe"
 
-1. Clone the repository
-2. Install dependencies with `pnpm install`
-3. Run the desired scripts as needed
+# Add to PATH (you may need to restart your terminal)
+$env:Path += ";$env:USERPROFILE\.dotcodeschool\bin"
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";$env:USERPROFILE\.dotcodeschool\bin", "User")
+```
 
-## Releases
+### Verify Installation
 
-The latest release includes pre-built binaries for multiple platforms:
+```bash
+# Check if tools are available
+dotcodeschool-setup --version
+dotcodeschool-build-images --version
+```
+
+### Usage
+
+```bash
+# Run setup
+dotcodeschool-setup
+
+# Build images
+dotcodeschool-build-images
+```
+
+### Development Setup
+
+If you want to work on the tools themselves:
+
+```bash
+# Clone the repository
+git clone https://github.com/dotcodeschool/build-tools.git
+cd build-tools
+
+# Install dependencies
+pnpm install
+
+# Build the tools
+pnpm build:all
+```
+
+## Available Tools
 
 ### Build Images Tool
 
@@ -50,7 +94,20 @@ The latest release includes pre-built binaries for multiple platforms:
 - macOS: [dotcodeschool-setup-macos](https://github.com/dotcodeschool/build-tools/releases/latest/download/dotcodeschool-setup-macos)
 - Windows: [dotcodeschool-setup-win.exe](https://github.com/dotcodeschool/build-tools/releases/latest/download/dotcodeschool-setup-win.exe)
 
-You can also view all releases on the [Releases page](https://github.com/dotcodeschool/build-tools/releases/latest).
+## Development Scripts
+
+- `pnpm setup` - Run the setup process
+- `pnpm build-images` - Build Docker images
+- `pnpm build:all` - Run all build processes
+- `pnpm build:setup` - Build setup components
+- `pnpm build:images` - Build all Docker images
+
+## Project Structure
+
+This is a monorepo managed with PNPM workspaces. The main packages are:
+
+- `dotcodeschool-setup` - Setup utilities
+- `dotcodeschool-build-images` - Docker image build tools
 
 ## License
 

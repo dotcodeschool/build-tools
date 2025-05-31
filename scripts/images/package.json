@@ -26,7 +26,11 @@
       "node18-linux-x64",
       "node18-win-x64"
     ],
-    "outputPath": "../../dist/images"
+    "outputPath": "../../dist/images",
+    "options": [
+      "experimental-modules",
+      "experimental-specifier-resolution=node"
+    ]
   },
   "engines": {
     "node": ">=18.0.0",
