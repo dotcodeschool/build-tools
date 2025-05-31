@@ -1,0 +1,38 @@
+{
+  "name": "dotcodeschool-setup",
+  "version": "1.0.0",
+  "description": "Setup script for Dot Code School services",
+  "main": "setup.js",
+  "bin": {
+    "dotcodeschool-setup": "./setup.js"
+  },
+  "scripts": {
+    "start": "node setup.js",
+    "build": "pkg .",
+    "build:all": "pkg . --targets node18-macos-x64,node18-linux-x64,node18-win-x64"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "inquirer": "^8.2.5",
+    "ora": "^5.4.1"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1"
+  },
+  "pkg": {
+    "scripts": "setup.js",
+    "assets": [
+      "../templates/compose/*"
+    ],
+    "targets": [
+      "node18-macos-x64",
+      "node18-linux-x64",
+      "node18-win-x64"
+    ],
+    "outputPath": "../../dist/setup"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

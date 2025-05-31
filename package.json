@@ -1,0 +1,17 @@
+{
+  "name": "dotcodeschool-build-tools",
+  "version": "1.0.0",
+  "description": "Build tools for Dot Code School services",
+  "private": true,
+  "scripts": {
+    "setup": "pnpm --filter dotcodeschool-setup start",
+    "build-images": "pnpm --filter dotcodeschool-build-images start",
+    "build:all": "pnpm run build:setup && pnpm run build:images",
+    "build:setup": "pnpm --filter dotcodeschool-setup build:all",
+    "build:images": "pnpm --filter dotcodeschool-build-images build:all"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

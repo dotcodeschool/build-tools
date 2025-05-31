@@ -1,0 +1,35 @@
+{
+  "name": "dotcodeschool-build-images",
+  "version": "1.0.0",
+  "description": "Build and push tool for Dot Code School services",
+  "main": "build-and-push.js",
+  "bin": {
+    "dotcodeschool-build-images": "./build-and-push.js"
+  },
+  "scripts": {
+    "start": "node build-and-push.js",
+    "build": "pkg .",
+    "build:all": "pkg . --targets node18-macos-x64,node18-linux-x64,node18-win-x64"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "inquirer": "^8.2.5",
+    "ora": "^5.4.1"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1"
+  },
+  "pkg": {
+    "scripts": "build-and-push.js",
+    "targets": [
+      "node18-macos-x64",
+      "node18-linux-x64",
+      "node18-win-x64"
+    ],
+    "outputPath": "../../dist/images"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
