@@ -34,6 +34,24 @@ This is a monorepo managed with PNPM workspaces. The main packages are:
 2. Install dependencies with `pnpm install`
 3. Run the desired scripts as needed
 
+## Releases
+
+The latest release includes pre-built binaries for multiple platforms:
+
+### Build Images Tool
+
+- Linux: [dotcodeschool-build-images-linux](https://github.com/dotcodeschool/build-tools/releases/latest/download/dotcodeschool-build-images-linux)
+- macOS: [dotcodeschool-build-images-macos](https://github.com/dotcodeschool/build-tools/releases/latest/download/dotcodeschool-build-images-macos)
+- Windows: [dotcodeschool-build-images-win.exe](https://github.com/dotcodeschool/build-tools/releases/latest/download/dotcodeschool-build-images-win.exe)
+
+### Setup Tool
+
+- Linux: [dotcodeschool-setup-linux](https://github.com/dotcodeschool/build-tools/releases/latest/download/dotcodeschool-setup-linux)
+- macOS: [dotcodeschool-setup-macos](https://github.com/dotcodeschool/build-tools/releases/latest/download/dotcodeschool-setup-macos)
+- Windows: [dotcodeschool-setup-win.exe](https://github.com/dotcodeschool/build-tools/releases/latest/download/dotcodeschool-setup-win.exe)
+
+You can also view all releases on the [Releases page](https://github.com/dotcodeschool/build-tools/releases/latest).
+
 ## License
 
 This project is licensed under the [WTFPL](LICENSE) - Do What The Fuck You Want To Public License.
