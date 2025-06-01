@@ -361,6 +361,70 @@ Examples:
   return config;
 }
 
+// Function to set up multi-platform builder
+async function setupMultiPlatformBuilder() {
+  const spinner = ora("Setting up multi-platform builder...").start();
+  try {
+    // Check if builder exists
+    const { stdout: builders } = await execPromise("docker buildx ls");
+    const builderName = "multi-platform-builder";
+
+    if (!builders.includes(builderName)) {
+      // Create new builder instance
+      await execPromise(
+        `docker buildx create --name ${builderName} --driver docker-container --bootstrap`
+      );
+      spinner.succeed("Created new multi-platform builder");
+    } else {
+      spinner.succeed("Multi-platform builder already exists");
+    }
+
+    // Use the builder
+    await execPromise(`docker buildx use ${builderName}`);
+    spinner.succeed("Multi-platform builder is ready");
+  } catch (error) {
+    spinner.fail(`Failed to set up multi-platform builder: ${error.message}`);
+    process.exit(1);
+  }
+}
+
+// Function to build multi-architecture images
+async function buildMultiArchImages() {
+  console.log(
+    chalk.bold.blue(`\n${EMOJIS.ROCKET} Building Multi-Architecture Images\n`)
+  );
+
+  // Set up multi-platform builder first
+  await setupMultiPlatformBuilder();
+
+  const buildSpinner = ora(
+    "Building images for multiple architectures..."
+  ).start();
+
+  try {
+    // Build backend image
+    await execPromise(
+      "docker buildx build --platform linux/amd64,linux/arm64 -t iammasterbrucewayne/dcs-backend:latest -t iammasterbrucewayne/dcs-backend:1.0.0 --push ../backend"
+    );
+
+    // Build git-server image
+    await execPromise(
+      "docker buildx build --platform linux/amd64,linux/arm64 -t iammasterbrucewayne/dcs-git-server:latest -t iammasterbrucewayne/dcs-git-server:1.0.0 --push ../git-server"
+    );
+
+    // Build log-streamer image
+    await execPromise(
+      "docker buildx build --platform linux/amd64,linux/arm64 -t iammasterbrucewayne/dcs-log-streamer:latest -t iammasterbrucewayne/dcs-log-streamer:1.0.0 --push ../log-streamer"
+    );
+
+    buildSpinner.succeed("Multi-architecture images built successfully");
+  } catch (error) {
+    buildSpinner.fail("Failed to build multi-architecture images");
+    console.error(chalk.red(`Error: ${error.message}`));
+    process.exit(1);
+  }
+}
+
 // Main function
 async function main() {
   try {
@@ -528,6 +592,9 @@ async function main() {
       config.redisUser
     );
     composeSpinner.succeed("Configuration created");
+
+    // Build multi-architecture images
+    await buildMultiArchImages();
 
     // Start services
     console.log(chalk.bold.blue(`\n${EMOJIS.ROCKET} Starting Services\n`));

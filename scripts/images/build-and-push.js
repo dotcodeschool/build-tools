@@ -66,6 +66,33 @@ async function checkRepo(repo) {
   }
 }
 
+// Function to set up multi-platform builder
+async function setupMultiPlatformBuilder() {
+  const spinner = ora("Setting up multi-platform builder...").start();
+  try {
+    // Check if builder exists
+    const { stdout: builders } = await execPromise("docker buildx ls");
+    const builderName = "multi-platform-builder";
+
+    if (!builders.includes(builderName)) {
+      // Create new builder instance
+      await execPromise(
+        `docker buildx create --name ${builderName} --driver docker-container --bootstrap`
+      );
+      spinner.succeed("Created new multi-platform builder");
+    } else {
+      spinner.succeed("Multi-platform builder already exists");
+    }
+
+    // Use the builder
+    await execPromise(`docker buildx use ${builderName}`);
+    spinner.succeed("Multi-platform builder is ready");
+  } catch (error) {
+    spinner.fail(`Failed to set up multi-platform builder: ${error.message}`);
+    process.exit(1);
+  }
+}
+
 // Function to build and push an image
 async function buildAndPush(service, context) {
   const repo = `dcs-${service}`;
@@ -85,10 +112,14 @@ async function buildAndPush(service, context) {
 
     // Build the image with progress
     spinner.stop();
-    console.log(chalk.blue(`\n${EMOJIS.GEAR} Building ${service}...`));
+    console.log(
+      chalk.blue(
+        `\n${EMOJIS.GEAR} Building ${service} for multiple architectures...`
+      )
+    );
 
     const buildProcess = exec(
-      `docker build -t ${imageName} -f ${dockerfilePath} ${context}`
+      `docker buildx build --platform linux/amd64,linux/arm64 -t ${imageName} -f ${dockerfilePath} ${context} --push`
     );
 
     buildProcess.stdout.on("data", (data) => {
@@ -98,10 +129,20 @@ async function buildAndPush(service, context) {
         if (line.includes("Step")) {
           console.log(chalk.cyan(line)); // Steps in cyan
         } else if (line.includes("Pulling")) {
-          console.log(chalk.blue(line)); // Changed from yellow to blue
+          console.log(chalk.blue(line));
         } else if (line.includes("Successfully")) {
           console.log(chalk.green(line));
         } else if (line.includes("Using cache")) {
+          console.log(chalk.magenta(line));
+        } else if (line.includes("Building")) {
+          console.log(chalk.blue(line));
+        } else if (line.includes("Pushing")) {
+          console.log(chalk.cyan(line));
+        } else if (line.includes("Pushed")) {
+          console.log(chalk.green(line));
+        } else if (line.includes("Layer")) {
+          console.log(chalk.blue(line));
+        } else if (line.includes("Preparing")) {
           console.log(chalk.magenta(line));
         } else if (line.trim()) {
           console.log(chalk.gray(line));
@@ -114,7 +155,7 @@ async function buildAndPush(service, context) {
       if (data.toString().toLowerCase().includes("error")) {
         console.error(chalk.red(data));
       } else {
-        console.log(chalk.blue(data)); // Changed from yellow to blue
+        console.log(chalk.blue(data));
       }
     });
 
@@ -128,50 +169,10 @@ async function buildAndPush(service, context) {
       });
     });
 
-    // Push the image with progress
-    console.log(chalk.blue(`\n${EMOJIS.ROCKET} Pushing ${service}...`));
-
-    const pushProcess = exec(`docker push ${imageName}`);
-
-    pushProcess.stdout.on("data", (data) => {
-      // Filter and format the output
-      const lines = data.toString().split("\n");
-      lines.forEach((line) => {
-        if (line.includes("Pushing")) {
-          console.log(chalk.cyan(line));
-        } else if (line.includes("Pushed")) {
-          console.log(chalk.green(line));
-        } else if (line.includes("Layer")) {
-          console.log(chalk.blue(line)); // Changed from yellow to blue
-        } else if (line.includes("Preparing")) {
-          console.log(chalk.magenta(line));
-        } else if (line.trim()) {
-          console.log(chalk.gray(line));
-        }
-      });
-    });
-
-    pushProcess.stderr.on("data", (data) => {
-      // Only use red for actual errors
-      if (data.toString().toLowerCase().includes("error")) {
-        console.error(chalk.red(data));
-      } else {
-        console.log(chalk.blue(data)); // Changed from yellow to blue
-      }
-    });
-
-    await new Promise((resolve, reject) => {
-      pushProcess.on("close", (code) => {
-        if (code === 0) {
-          resolve();
-        } else {
-          reject(new Error(`Push failed with code ${code}`));
-        }
-      });
-    });
-
     console.log(
-      chalk.green(`\n${EMOJIS.CHECK} Successfully built and pushed ${service}!`)
+      chalk.green(
+        `\n${EMOJIS.CHECK} Successfully built and pushed ${service} for multiple architectures!`
+      )
     );
   } catch (error) {
     console.error(chalk.red(`\n${EMOJIS.CROSS} Error: ${error.message}`));
@@ -235,6 +236,9 @@ Examples:
 // Main function
 async function main() {
   console.log(chalk.blue(`\n${EMOJIS.ROCKET} Docker Build and Push Tool\n`));
+
+  // Set up multi-platform builder first
+  await setupMultiPlatformBuilder();
 
   // Parse command line arguments
   const cliServices = parseArgs();
