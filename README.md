@@ -1,3 +1,12 @@
+> [!CAUTION]
+> **This repository has been archived and is no longer maintained.**
+> 
+> These build tools were used to create Docker images for the old backend services (backend, git-server, log-streamer, test-runner). Dot Code School now uses a fully static pipeline deployed via Vercel with no Docker-based services.
+> 
+> See [dotcodeschool/frontend](https://github.com/dotcodeschool/frontend) for the current platform.
+
+---
+
 # Dot Code School Build Tools
 
 This repository contains build tools and utilities for Dot Code School services.
